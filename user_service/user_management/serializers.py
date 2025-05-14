@@ -1,0 +1,29 @@
+from rest_framework import serializers
+from user_management.models import *
+
+
+class JuizUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = JuizUser
+        fields = '__all__'
+
+
+class RecipeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Recipe
+        fields = '__all__'
+        extra_kwargs = {
+            'image': {'required': False, 'allow_null': True},
+        }
+
+
+class TutorialSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tutorial
+        fields = '__all__'
+
+
+class BlogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Blog
+        fields = '__all__'
