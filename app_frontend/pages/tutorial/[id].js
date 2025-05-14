@@ -11,7 +11,7 @@ const TutorialDetail = () => {
   useEffect(() => {
     if (id) {
       axios
-        .get(`${getBaseUrl()}/api/tutorials/${id}`)
+        .get(`${getBaseUrl()}/api/tutorials/${id}/`)
         .then((res) => setTutorial(res.data))
         .catch((err) => console.error("Failed to load tutorial", err));
     }
