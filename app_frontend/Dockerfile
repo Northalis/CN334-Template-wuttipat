@@ -2,36 +2,24 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
-RUN \
-  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
-  elif [ -f package-lock.json ]; then npm ci; \
-  elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm i --frozen-lockfile; \
-  else echo "Lockfile not found." && exit 1; \
-  fi
+# Copy package.json and install dependencies
+COPY package.json package-lock.json* ./
+RUN npm ci
 
+# Copy source code
 COPY . .
 
-# Disable ESLint during build
-ENV DISABLE_ESLINT_PLUGIN=true
-ENV NEXT_TELEMETRY_DISABLED=1
+# Set environment variables
+ENV NODE_ENV=production
+ENV NEXT_PUBLIC_USER_API_URL=https://the-juiz-lab-app-backend.onrender.com
+ENV PORT=3000
 
-RUN npm run build
+# Debugging: Print environment variables
+RUN echo "NEXT_PUBLIC_USER_API_URL=$NEXT_PUBLIC_USER_API_URL"
 
-# Production image, copy all the files and run next
-FROM node:18-alpine AS runner
-WORKDIR /app
-
-ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED=1
-
-COPY --from=0 /app/public ./public
-COPY --from=0 /app/.next/standalone ./
-COPY --from=0 /app/.next/static ./.next/static
+# Build app
+RUN npm run build --verbose
 
 EXPOSE 3000
 
-ENV PORT 3000
-ENV HOSTNAME "0.0.0.0"
-
-CMD ["node", "server.js"]
+CMD ["npm", "start"]

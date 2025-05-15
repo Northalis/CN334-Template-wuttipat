@@ -51,7 +51,7 @@ export default function EditProfile() {
     } else {
       router.push("/login");
     }
-  }, []);
+  }, [router, token]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

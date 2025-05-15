@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { getBaseUrl } from "@/baseURLS";
 import { useRouter } from "next/router";
-import Image from "next/image";
 
 const inter = Inter({ subsets: ["latin"] });
 
