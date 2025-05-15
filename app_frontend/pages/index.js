@@ -39,7 +39,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="flex flex-col items-center justify-center text-center py-20">
         <h1 className="text-4xl font-bold mb-6 text-[#6B8E23]">
-          Welcome to The Juiz Lab!
+          The Juiz Lab!
         </h1>
         <p className="text-lg mb-8 max-w-xl">
           Discover recipes, learn new cooking techniques, and connect with a
@@ -66,8 +66,8 @@ export default function Home() {
         <h2 className="text-2xl font-bold mb-6">Popular Recipes</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {/* Example recipe card */}
-          {recipes.map((recipe, index) => (
-            <Link key={index} href={`/recipe/${index}`}>
+          {recipes.map((recipe) => (
+            <Link key={recipe.id} href={`/recipe/${recipe.id}`}>
               <div className="bg-white p-4 rounded shadow hover:shadow-md transition cursor-pointer">
                 {recipe.image ? (
                   <img

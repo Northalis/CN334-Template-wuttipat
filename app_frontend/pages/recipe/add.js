@@ -68,7 +68,7 @@ const AddRecipe = () => {
         // Redirect to login on error
         localStorage.removeItem("access_token");
         localStorage.removeItem("refresh_token");
-        router.push("/login?redirect=/add-recipe");
+        router.push("/login?redirect=/recipe/add");
       } finally {
         setIsLoading(false);
       }
@@ -82,7 +82,7 @@ const AddRecipe = () => {
 
     if (!isAuthenticated) {
       alert("You must be logged in to add a recipe");
-      router.push("/login?redirect=/add-recipe");
+      router.push("/login?redirect=/recipe/add");
       return;
     }
 
@@ -97,24 +97,42 @@ const AddRecipe = () => {
       setIsLoading(true);
       const token = localStorage.getItem("access_token");
 
-      await axios.post(`${getBaseUrl()}/api/recipes/add`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      // Log the complete form data for debugging
+      console.log("Form Data Contents:");
+      for (let pair of formData.entries()) {
+        console.log(pair[0] + ": " + pair[1]);
+      }
 
+      const response = await axios.post(
+        `${getBaseUrl()}/api/recipes/add`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("Success response:", response.data);
       alert("Recipe added successfully");
-      router.push("/recipe"); // Redirect to recipes page after successful addition
+      router.push("/recipe");
     } catch (err) {
-      console.error(err);
+      console.error("Error details:");
+      console.error("Status:", err.response?.status);
+      console.error("Data:", JSON.stringify(err.response?.data, null, 2));
+      console.error("Headers:", err.response?.headers);
 
       // Handle different error scenarios
       if (err.response?.status === 401) {
         alert("Your session has expired. Please login again.");
-        router.push("/login?redirect=/add-recipe");
+        router.push("/login?redirect=/recipe/add");
       } else {
-        alert("Error adding recipe. Please try again.");
+        const errorMessage =
+          typeof err.response?.data === "object"
+            ? JSON.stringify(err.response?.data, null, 2)
+            : err.response?.data || "An error occurred while adding the recipe";
+        alert(`Error adding recipe:\n${errorMessage}`);
       }
     } finally {
       setIsLoading(false);
