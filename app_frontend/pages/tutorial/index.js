@@ -3,7 +3,7 @@ import axios from "axios";
 import { getBaseUrl } from "@/baseURLS";
 import Link from "next/link";
 
-const tutorial = () => {
+const Tutorial = () => {
   const [tutorials, setTutorials] = useState([]);
 
   useEffect(() => {
@@ -73,4 +73,4 @@ const tutorial = () => {
   );
 };
 
-export default tutorial;
+export default Tutorial;
