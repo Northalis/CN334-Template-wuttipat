@@ -5,8 +5,6 @@ import { getBaseUrl } from "@/baseURLS";
 
 export default function EditProfile() {
   const router = useRouter();
-  const { id } = router.query;
-
   const [form, setForm] = useState({
     full_name: "",
     bio: "",
@@ -14,14 +12,46 @@ export default function EditProfile() {
     email: "",
     profile_image: null,
   });
+  const [profileId, setProfileId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState(null);
+
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
 
   useEffect(() => {
-    if (id) {
-      axios
-        .get(`${getBaseUrl()}/api/customers/${id}/`)
-        .then((res) => setForm(res.data));
+    const fetchUserAndProfile = async () => {
+      try {
+        const authRes = await axios.get(`${getBaseUrl()}/api/auth/check`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const userId = authRes.data.user_id;
+
+        const profileRes = await axios.get(
+          `${getBaseUrl()}/api/profile/user/${userId}/`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        setForm(profileRes.data);
+        setProfileId(profileRes.data.id);
+        console.log(profileRes.data); // Profile data
+        setUserId(authRes.data.user_id);
+        setLoading(false);
+      } catch (err) {
+        console.error("Auth or profile fetch failed:", err);
+        router.push("/login"); // Redirect if unauthorized
+      }
+    };
+
+    if (token) {
+      fetchUserAndProfile();
+    } else {
+      router.push("/login");
     }
-  }, [id]);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -34,14 +64,32 @@ export default function EditProfile() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!profileId) return alert("Profile not loaded.");
+
     const formData = new FormData();
     Object.entries(form).forEach(([key, value]) => formData.append(key, value));
 
-    await axios.put(`${getBaseUrl}/api/customers/${id}/`, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-    router.push(`/profile/${id}`);
+    try {
+      await axios.put(
+        `${getBaseUrl()}/api/profile/edit/${profileId}/`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      alert("Profile updated!");
+      router.push(`/profile/${userId}`);
+    } catch (err) {
+      console.error("Failed to update profile:", err.response?.data || err);
+      alert("Failed to update profile.");
+    }
   };
+
+  if (loading) return <p className="text-center">Loading...</p>;
 
   return (
     <div className="max-w-2xl mx-auto p-6">
@@ -78,7 +126,7 @@ export default function EditProfile() {
         <input type="file" name="profile_image" onChange={handleImageChange} />
         <button
           type="submit"
-          className="bg-[#6B8E23] text-white px-4 py-2 rounded"
+          className="bg-green-600 text-white px-4 py-2 rounded"
         >
           Save
         </button>

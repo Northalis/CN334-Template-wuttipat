@@ -3,10 +3,10 @@ from user_management.models import *
 
 
 class JuizUserSerializer(serializers.ModelSerializer):
+    user = serializers.IntegerField(source='user.id', read_only=True)
     class Meta:
         model = JuizUser
-        fields = '__all__'
-
+        fields = fields = ['id', 'user', 'email', 'full_name', 'bio', 'profile_image', 'tel']
 
 class RecipeSerializer(serializers.ModelSerializer):
     class Meta:

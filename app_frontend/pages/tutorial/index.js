@@ -17,7 +17,7 @@ const tutorial = () => {
     <div className="space-y-8">
       <div className="flex justify-end">
         <Link
-          href="/add"
+          href="tutorial/add"
           className="px-4 py-2 bg-[#6B8E23] text-white rounded hover:bg-[#557A1F] transition"
         >
           + Add Totorial
@@ -27,7 +27,10 @@ const tutorial = () => {
       <section>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold">Recommended Tutorials</h2>
-          <Link href="/all" className="text-[#6B8E23] hover:underline text-sm">
+          <Link
+            href="tutorial/all"
+            className="text-[#6B8E23] hover:underline text-sm"
+          >
             View All →
           </Link>
         </div>

@@ -11,11 +11,27 @@ const AddTutorial = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${getBaseUrl()}/api/tutorials/add`, {
-        title,
-        video_url: videoUrl,
-        description,
-      });
+      const token = localStorage.getItem("access_token");
+      if (!token) {
+        alert("You must be logged in to add a tutorial.");
+        router.push("/login");
+        return;
+      }
+
+      await axios.post(
+        `${getBaseUrl()}/api/tutorials/add`,
+        {
+          title,
+          video_url: videoUrl,
+          description,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
       alert("Tutorial added successfully");
       router.push("/tutorial");
     } catch (err) {

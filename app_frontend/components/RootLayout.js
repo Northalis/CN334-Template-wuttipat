@@ -1,21 +1,29 @@
 import Link from "next/link";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { getBaseUrl } from "@/baseURLS";
+import Logo from "@/public/Logo.png"; // Adjust path if needed
 
 export default function RootLayout({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  // This effect runs on initial load and when localStorage changes
   useEffect(() => {
-    // Check if user is logged in
     const checkAuth = async () => {
       try {
-        const token = localStorage.getItem("access_token");
+        // First check localStorage for user data
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
+          setLoading(false);
+          return;
+        }
 
+        // If no stored user, check with the API
+        const token = localStorage.getItem("access_token");
         if (token) {
           const response = await axios.get(`${getBaseUrl()}/api/auth/check`, {
             headers: {
@@ -25,23 +33,56 @@ export default function RootLayout({ children }) {
 
           if (response.data.authenticated) {
             setUser(response.data);
+            // Store user data in localStorage
+            localStorage.setItem("user", JSON.stringify(response.data));
           }
         }
       } catch (error) {
         console.error("Authentication check failed:", error);
-        // Don't redirect here, just show login option
+        // Clear invalid tokens
+        if (error.response?.status === 401) {
+          localStorage.removeItem("access_token");
+          localStorage.removeItem("refresh_token");
+          localStorage.removeItem("user");
+        }
       } finally {
         setLoading(false);
       }
     };
 
     checkAuth();
+
+    // Add event listener for storage changes
+    const handleStorageChange = (e) => {
+      if (e.key === "user" || e.key === "access_token") {
+        checkAuth();
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    // Custom event for when user logs in/out within the same window
+    const handleAuthEvent = () => {
+      checkAuth();
+    };
+
+    window.addEventListener("authChange", handleAuthEvent);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("authChange", handleAuthEvent);
+    };
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
+    localStorage.removeItem("user");
     setUser(null);
+
+    // Dispatch custom event to notify other components
+    window.dispatchEvent(new Event("authChange"));
+
     router.push("/login");
   };
 
@@ -50,8 +91,12 @@ export default function RootLayout({ children }) {
       {/* Left Menu Section */}
       <aside className="w-1/6 bg-[#F4EBD0] p-4 flex flex-col items-center">
         <div className="text-2xl font-bold mb-6">
-          {/* Use Next.js Image component for better image optimization */}
-          <Image src="/Logo.png" alt="Logo" width={150} height={150} priority />
+          {/* Use a regular img tag for Docker compatibility */}
+          <img
+            src={Logo.src || "/logo.png"}
+            alt="Logo"
+            className="h-[150px] w-auto"
+          />
         </div>
         <nav className="space-y-4 w-full">
           <Link
@@ -106,7 +151,10 @@ export default function RootLayout({ children }) {
           </div>
         ) : user ? (
           <div className="flex flex-col items-center">
-            <Link href="/profile" className="flex flex-col items-center">
+            <Link
+              href={`/profile/${user.user_id}`}
+              className="flex flex-col items-center"
+            >
               <div className="w-12 h-12 rounded-full bg-[#6B8E23] text-white flex items-center justify-center font-bold">
                 {user.username ? user.username.charAt(0).toUpperCase() : "U"}
               </div>
@@ -114,7 +162,7 @@ export default function RootLayout({ children }) {
             </Link>
             <div className="mt-4 space-y-2">
               <Link
-                href="/profile"
+                href={`/profile/${user.user_id}`}
                 className="block text-sm text-center px-4 py-1 rounded hover:bg-[#E07B50] hover:text-white"
               >
                 My Profile
