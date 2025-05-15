@@ -42,7 +42,7 @@ urlpatterns = [
     # Authentication check endpoint
     path("api/auth/check", check_auth, name="check_auth"),
     path(
-        "api/recipes/<int:recipe_id>",
+        "api/recipes/<int:pk>",
         RecipeDetailAPIView.as_view(),
         name="recipe-detail",
     ),
@@ -59,9 +59,10 @@ urlpatterns = [
         name="update_user_profile",
     ),
     # delete endpoints
-    path("delete/recipe/<int:pk>/", delete_recipe),
-    path("delete/tutorial/<int:pk>/", delete_tutorial),
-    path("delete/blog/<int:pk>/", delete_blog),
+    path("api/delete/recipe/<int:pk>/", delete_recipe),
+    path("api/delete/tutorial/<int:pk>/", delete_tutorial),
+    path("api/delete/blog/<int:pk>/", delete_blog),
+    path("api/edit/recipe/<int:pk>/", edit_recipe, name="edit_recipe"),
 ]
 
 if settings.DEBUG:

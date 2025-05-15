@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
-import { getBaseUrl } from "@/baseURLS";
+import { getBaseUrl, getMediaUrl } from "@/baseURLS";
 
 const ProfilePage = () => {
   const router = useRouter();
@@ -27,19 +27,48 @@ const ProfilePage = () => {
 
   const handleDelete = async (type, itemId) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("access_token");
+      if (!token) {
+        alert("You must be logged in to delete items");
+        router.push("/login");
+        return;
+      }
+
+      console.log(`Attempting to delete ${type} with id ${itemId}`);
+
       await axios.delete(`${getBaseUrl()}/api/delete/${type}/${itemId}/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
+      // Update the UI after successful deletion
       if (type === "recipe") {
         setRecipes((prev) => prev.filter((r) => r.id !== itemId));
+        alert("Recipe deleted successfully");
       } else if (type === "tutorial") {
         setTutorials((prev) => prev.filter((t) => t.id !== itemId));
+        alert("Tutorial deleted successfully");
       } else if (type === "blog") {
         setBlogs((prev) => prev.filter((b) => b.id !== itemId));
+        alert("Blog deleted successfully");
       }
     } catch (err) {
-      console.error("Delete failed:", err);
+      console.error("Delete failed:", err.response?.data || err.message);
+      if (err.response?.status === 401) {
+        alert("Your session has expired. Please login again.");
+        router.push("/login");
+      } else if (err.response?.status === 404) {
+        alert(
+          `${
+            type.charAt(0).toUpperCase() + type.slice(1)
+          } not found or already deleted`
+        );
+      } else {
+        alert(
+          `Error deleting ${type}: ${
+            err.response?.data?.error || "Unknown error occurred"
+          }`
+        );
+      }
     }
   };
 
@@ -51,7 +80,7 @@ const ProfilePage = () => {
         <div className="w-24 h-24 rounded-full bg-gray-300">
           {profile.profile_image ? (
             <img
-              src={profile.profile_image}
+              src={getMediaUrl(profile.profile_image)}
               alt="Profile"
               className="w-full h-full object-cover rounded-full"
             />
@@ -102,7 +131,7 @@ const ProfilePage = () => {
                   <div className="bg-white p-4 rounded shadow hover:shadow-md transition cursor-pointer">
                     {item.image ? (
                       <img
-                        src={item.image}
+                        src={getMediaUrl(item.image)}
                         alt={item.title}
                         className="h-40 w-full object-cover rounded mb-2"
                       />
@@ -129,7 +158,25 @@ const ProfilePage = () => {
               <div key={tutorial.id} className="relative">
                 <Link href={`/tutorial/${tutorial.id}`}>
                   <div className="bg-white p-4 rounded shadow hover:shadow-md transition cursor-pointer">
-                    <h3 className="text-lg font-semibold">{tutorial.title}</h3>
+                    <div className="h-40 bg-gray-200 rounded mb-4 flex items-center justify-center">
+                      <svg
+                        className="w-12 h-12 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                        />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg font-semibold mb-2">
+                      {tutorial.title}
+                    </h3>
                     <p className="text-sm text-gray-600 line-clamp-3">
                       {tutorial.description}
                     </p>

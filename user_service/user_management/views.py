@@ -92,9 +92,13 @@ def check_auth(request):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def add_recipe(request):
-    serializer = RecipeSerializer(data=request.data)
+    data = request.data.copy()  # Make a mutable copy of the data
+    data["created_by"] = (
+        request.user.id
+    )  # Add the user ID from the authenticated session
+    serializer = RecipeSerializer(data=data)
     if serializer.is_valid():
-        serializer.save(created_by=request.user)
+        serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -102,9 +106,13 @@ def add_recipe(request):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def add_tutorial(request):
-    serializer = TutorialSerializer(data=request.data)
+    data = request.data.copy()  # Make a mutable copy of the data
+    data["created_by"] = (
+        request.user.id
+    )  # Add the user ID from the authenticated session
+    serializer = TutorialSerializer(data=data)
     if serializer.is_valid():
-        serializer.save(created_by=request.user)
+        serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -112,9 +120,13 @@ def add_tutorial(request):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def add_blog(request):
-    serializer = BlogSerializer(data=request.data)
+    data = request.data.copy()  # Make a mutable copy of the data
+    data["created_by"] = (
+        request.user.id
+    )  # Add the user ID from the authenticated session
+    serializer = BlogSerializer(data=data)
     if serializer.is_valid():
-        serializer.save(created_by=request.user)
+        serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -229,4 +241,24 @@ def delete_blog(request, pk):
     except Blog.DoesNotExist:
         return Response(
             {"error": "Not found or not authorized"}, status=status.HTTP_404_NOT_FOUND
+        )
+
+
+@api_view(["PUT"])
+@permission_classes([IsAuthenticated])
+def edit_recipe(request, pk):
+    try:
+        recipe = Recipe.objects.get(pk=pk, created_by=request.user)
+        data = request.data.copy()
+        data["created_by"] = request.user.id
+
+        serializer = RecipeSerializer(recipe, data=data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Recipe.DoesNotExist:
+        return Response(
+            {"error": "Recipe not found or not authorized"},
+            status=status.HTTP_404_NOT_FOUND,
         )

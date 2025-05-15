@@ -73,8 +73,8 @@ const Recipe = () => {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
           {" "}
-          {recipes.map((recipe, index) => (
-            <Link key={index} href={`/recipe/${index}`}>
+          {recipes.map((recipe) => (
+            <Link key={recipe.id} href={`/recipe/${recipe.id}`}>
               <div className="bg-white p-4 rounded shadow hover:shadow-md transition cursor-pointer">
                 {recipe.image ? (
                   <img
