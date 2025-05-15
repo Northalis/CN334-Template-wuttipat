@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { getBaseUrl } from "@/baseURLS";
 import Link from "next/link";
+import Image from "next/image";
 
 const AllRecipes = () => {
   const [recipes, setRecipes] = useState([]);
@@ -27,7 +28,7 @@ const AllRecipes = () => {
           <Link href={`/recipe/${recipe.id}`} key={recipe.id}>
             <div className="bg-white p-4 rounded shadow hover:shadow-md transition cursor-pointer">
               {recipe.image ? (
-                <img
+                <Image
                   src={recipe.image}
                   alt={recipe.title}
                   className="h-40 w-full object-cover rounded mb-4"

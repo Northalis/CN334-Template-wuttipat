@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
 import { getBaseUrl, getMediaUrl } from "@/baseURLS";
+import Image from "next/image";
 
 const ProfilePage = () => {
   const router = useRouter();
@@ -79,7 +80,7 @@ const ProfilePage = () => {
       <div className="flex items-center space-x-6 mb-8">
         <div className="w-24 h-24 rounded-full bg-gray-300">
           {profile.profile_image ? (
-            <img
+            <Image
               src={getMediaUrl(profile.profile_image)}
               alt="Profile"
               className="w-full h-full object-cover rounded-full"
@@ -130,7 +131,7 @@ const ProfilePage = () => {
                 <Link href={`/recipe/${item.id}`}>
                   <div className="bg-white p-4 rounded shadow hover:shadow-md transition cursor-pointer">
                     {item.image ? (
-                      <img
+                      <Image
                         src={getMediaUrl(item.image)}
                         alt={item.title}
                         className="h-40 w-full object-cover rounded mb-2"

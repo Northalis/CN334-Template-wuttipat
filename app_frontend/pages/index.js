@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { getBaseUrl } from "@/baseURLS";
 import { useRouter } from "next/router";
+import Image from "next/image";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -70,7 +71,7 @@ export default function Home() {
             <Link key={recipe.id} href={`/recipe/${recipe.id}`}>
               <div className="bg-white p-4 rounded shadow hover:shadow-md transition cursor-pointer">
                 {recipe.image ? (
-                  <img
+                  <Image
                     src={recipe.image}
                     alt={recipe.title}
                     className="h-40 w-full object-cover rounded mb-4"

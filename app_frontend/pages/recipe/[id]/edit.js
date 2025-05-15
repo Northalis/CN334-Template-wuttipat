@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { getBaseUrl } from "@/baseURLS";
+import Image from "next/image";
 
 const EditRecipe = () => {
   const [title, setTitle] = useState("");
@@ -174,7 +175,7 @@ const EditRecipe = () => {
           </label>
           {currentImage && (
             <div className="mt-2">
-              <img
+              <Image
                 src={currentImage}
                 alt="Current recipe"
                 className="w-32 h-32 object-cover rounded"

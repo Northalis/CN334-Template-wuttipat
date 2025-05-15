@@ -5,6 +5,7 @@ import axios from "axios";
 import { getBaseUrl, getMediaUrl } from "@/baseURLS";
 import Logo from "@/public/Logo.png";
 import Banner from "./Banner";
+import Image from "next/image";
 
 export default function RootLayout({ children }) {
   const [user, setUser] = useState(null);
@@ -91,7 +92,7 @@ export default function RootLayout({ children }) {
       {/* Left Menu Section */}
       <aside className="w-1/6 bg-[#F4EBD0] p-6 flex flex-col items-center shadow-lg">
         <div className="text-2xl font-bold mb-8">
-          <img
+          <Image
             src={Logo.src || "/logo.png"}
             alt="Logo"
             className="h-[180px] w-auto"
@@ -113,7 +114,7 @@ export default function RootLayout({ children }) {
             🍳 Recipes
           </Link>
           <Link
-            href="/tutorial"
+            href="/Tutorial"
             replace
             className="block px-6 py-3 rounded-lg text-lg font-medium transition-all duration-200 hover:bg-[#E07B50] hover:text-white hover:shadow-md transform hover:-translate-y-0.5"
           >
@@ -179,7 +180,7 @@ export default function RootLayout({ children }) {
             >
               {userProfile?.profile_image ? (
                 <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-[#6B8E23] transition-transform transform group-hover:scale-105">
-                  <img
+                  <Image
                     src={getMediaUrl(userProfile.profile_image)}
                     alt="Profile"
                     className="w-full h-full object-cover"

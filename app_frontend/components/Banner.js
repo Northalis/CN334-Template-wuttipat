@@ -26,7 +26,7 @@ const Banner = () => {
           subtitle: "Discover and Share Amazing Recipes",
           bgColor: "from-[#E07B50] to-[#FFA07A]",
         },
-        "/tutorial": {
+        "/Tutorial": {
           title: "Tutorials",
           subtitle: "Learn Cooking Techniques from Experts",
           bgColor: "from-[#4682B4] to-[#87CEEB]",

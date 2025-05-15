@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { getBaseUrl, getMediaUrl } from "@/baseURLS";
 import Link from "next/link";
+import Image from "next/image";
 
 const RecipeDetail = () => {
   const router = useRouter();
@@ -132,7 +133,7 @@ const RecipeDetail = () => {
       </div>
 
       {recipe.image && (
-        <img
+        <Image
           src={recipe.image}
           alt={recipe.title}
           className="w-full h-64 object-cover rounded-lg mb-6"

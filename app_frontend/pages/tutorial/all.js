@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { getBaseUrl } from "@/baseURLS";
 import Link from "next/link";
-
+import Image from "next/image";
 const AllTutorials = () => {
   const [tutorials, setTutorials] = useState([]);
 
@@ -24,10 +24,10 @@ const AllTutorials = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
         {tutorials.map((tutorial) => (
-          <Link href={`/tutorial/${tutorial.id}`} key={tutorial.id}>
+          <Link href={`/Tutorial/${tutorial.id}`} key={tutorial.id}>
             <div className="bg-white p-4 rounded shadow hover:shadow-md transition cursor-pointer">
               {tutorial.image ? (
-                <img
+                <Image
                   src={tutorial.image}
                   alt={tutorial.title}
                   className="h-40 w-full object-cover rounded mb-4"

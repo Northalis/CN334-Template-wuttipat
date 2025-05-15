@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { getBaseUrl } from "@/baseURLS";
+import Image from "next/image";
 
 const TutorialDetail = () => {
   const router = useRouter();
@@ -23,7 +24,7 @@ const TutorialDetail = () => {
     <div className="p-6 max-w-3xl mx-auto">
       <h1 className="text-3xl font-bold mb-4">{tutorial.title}</h1>
       {tutorial.image && (
-        <img
+        <Image
           src={tutorial.image}
           alt={tutorial.title}
           className="mb-4 w-full rounded"
