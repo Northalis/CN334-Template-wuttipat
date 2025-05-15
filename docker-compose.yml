@@ -9,19 +9,6 @@ services:
       - POSTGRES_PASSWORD=cn334Admin
     ports:
       - "5432:5432"
-  product_api:
-    build: ./product_service
-    command: python manage.py runserver 0.0.0.0:8888
-    volumes:
-      - ./product_service:/code
-    ports:
-      - "3341:8888"
-    environment:
-      - POSTGRES_NAME=postgres
-      - POSTGRES_USER=cn334Admin
-      - POSTGRES_PASSWORD=cn334Admin
-    depends_on:
-      - db
   user_api:
     build: ./user_service
     command: python manage.py runserver 0.0.0.0:8888
