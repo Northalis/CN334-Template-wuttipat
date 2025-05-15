@@ -1,5 +1,5 @@
 export const getBaseUrl = () => {
-  return "http://127.0.0.1:3342";
+  return "https://the-juiz-lab-app-backend.onrender.com/";
 };
 
 export const getMediaUrl = (path) => {
