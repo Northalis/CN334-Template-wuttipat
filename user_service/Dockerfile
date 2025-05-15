@@ -20,7 +20,7 @@ RUN pip install --no-cache-dir --upgrade pip
 
 # Install Python dependencies
 COPY requirements.txt /code/
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt gunicorn
 
 # Copy project
 COPY . /code/

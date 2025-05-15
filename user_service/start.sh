@@ -14,13 +14,6 @@ echo "Starting with PORT=$PORT"
 echo "Database host: $POSTGRES_HOST"
 echo "Database port: $POSTGRES_PORT"
 
-# Wait for database to be ready
-echo "Waiting for PostgreSQL to be ready..."
-while ! nc -z $POSTGRES_HOST $POSTGRES_PORT; do
-  sleep 0.1
-done
-echo "PostgreSQL is ready!"
-
 # Apply database migrations
 echo "Applying database migrations..."
 python manage.py migrate
